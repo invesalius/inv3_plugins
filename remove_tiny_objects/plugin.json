@@ -1,0 +1,5 @@
+{
+    "name": "Remove tiny objects",
+    "description": "Remove tiny objects",
+    "enable-startup": false
+}

@@ -1,0 +1,5 @@
+{
+    "name": "Change image spacing",
+    "description": "Creates a new project with the actual project image spacing changed",
+    "enable-startup": false
+}
