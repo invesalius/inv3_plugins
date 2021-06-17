@@ -28,10 +28,13 @@ ctypedef s_coord coord
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-def jump_flooding(int number_sites, int size_x=250, int size_y=250, int size_z=250, bool normalize=True):
-    cdef np.ndarray[np.float32_t, ndim=3] image_voronoy = np.zeros((size_z, size_y, size_x), dtype=np.float32)
+def jump_flooding(np.ndarray[np.float32_t, ndim=3] image_voronoy, np.ndarray[np.int32_t, ndim=2] sites, bool normalize):
+    cdef int size_x, size_y, size_z, number_sites
+    size_z = image_voronoy.shape[0]
+    size_y = image_voronoy.shape[1]
+    size_x = image_voronoy.shape[2]
+    number_sites = sites.shape[0]
     cdef np.ndarray[np.int32_t, ndim=3] map_owners = np.zeros((size_z, size_y, size_x), dtype=np.int32)
-    cdef np.ndarray[np.int32_t, ndim=2] sites = np.random.randint((0, 0, 0), (size_z, size_y, size_x), (number_sites, 3), dtype=np.int32)
     cdef np.ndarray[np.int32_t, ndim=1] counts = np.zeros(number_sites, dtype=np.int32)
     cdef np.ndarray[np.int32_t, ndim=2] new_sites = np.zeros((number_sites, 3), dtype=np.int32)
     cdef np.ndarray[np.float32_t, ndim=1] max_dists = np.zeros(number_sites, dtype=np.float32)
@@ -126,7 +129,6 @@ def jump_flooding(int number_sites, int size_x=250, int size_y=250, int size_z=2
                     idx0 = map_owners[z, y, x] - 1
                     image_voronoy[z, y, x] /= max_dists[idx0]
 
-    return image_voronoy
 
 
 @cython.boundscheck(False) # turn of bounds-checking for entire function

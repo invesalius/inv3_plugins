@@ -32,9 +32,30 @@ def create_blobs(sx=256, sy=256, sz=256, gaussian=5):
 
 
 def create_voronoy(sx=256, sy=256, sz=256, number_sites=1000, normalize=False):
-    #  image = np.zeros((sz, sy, sx), dtype=np.float32)
-    #  image[:] = -1
-    #  sites = [(random.randrange(0, sx), random.randrange(0, sy), random.randrange(0, sz)) for i in range(number_sites)]
-    image = floodfill.jump_flooding(number_sites, sx, sy, sz, normalize)
+    image = np.zeros((sz, sy, sx), dtype=np.float32)
+    sites = np.random.randint((0, 0, 0), (sz, sy, sx), (number_sites, 3), dtype=np.int32)
+    floodfill.jump_flooding(image, sites, normalize)
+    print(image.min(), image.max())
+    return image
+
+
+def create_voronoy_non_random(sx=256, sy=256, sz=256, nsx=25, nsy=25, nsz=25, normalize=False, noise=False):
+    image = np.zeros((sz, sy, sx), dtype=np.float32)
+    x = np.arange(nsx)
+    y = np.arange(nsy)
+    z = np.arange(nsz)
+    z, y, x = np.meshgrid(z, y, x)
+    x = (x.flatten() + 0.5)
+    y = (y.flatten() + 0.5)
+    z = (z.flatten() + 0.5)
+    sites = np.stack((z, y, x), axis=1)
+    if noise:
+        r_noise = np.random.random(sites.shape) * 0.5 - 0.25
+        sites += r_noise
+    sites[:, 0] *= (sz / nsz)
+    sites[:, 1] *= (sy / nsy)
+    sites[:, 2] *= (sx / nsx)
+    sites = np.array(sites, dtype=np.int32)
+    floodfill.jump_flooding(image, sites, normalize)
     print(image.min(), image.max())
     return image
