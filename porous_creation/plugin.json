@@ -1,5 +1,5 @@
 {
-    "name": "Porous volume creation dev",
-    "description": "Create porous volume dev",
+    "name": "Porous volume creation",
+    "description": "Create porous volume",
     "enable-startup": true
 }
