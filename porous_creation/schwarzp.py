@@ -5,6 +5,9 @@ import random
 from . import floodfill
 
 
+GAUSSIAN_SIGMA = 1.5
+
+
 def create_schwarzp(method, init_x, end_x, init_y, end_y, init_z, end_z, sx=256, sy=256, sz=256):
     z, y, x = np.ogrid[
         init_z : end_z : complex(0, sz),
@@ -44,7 +47,7 @@ def create_voronoy(sx=256, sy=256, sz=256, number_sites=1000, normalize=False, b
             gz, gy, gx = np.gradient(map_owners)
             mag = np.sqrt(gz*gz + gy*gy + gx*gx)
         borders =  mag > 0
-        return nd.gaussian_filter(borders.astype(np.float32), 1.5)
+        return nd.gaussian_filter(borders.astype(np.float32), GAUSSIAN_SIGMA)
     else:
         return distance_map
 
@@ -76,6 +79,6 @@ def create_voronoy_non_random(sx=256, sy=256, sz=256, nsx=25, nsy=25, nsz=25, no
             gz, gy, gx = np.gradient(map_owners)
             mag = np.sqrt(gz**2 + gy**2 + gx**2)
         borders =  mag > 0
-        return nd.gaussian_filter(borders.astype(np.float32), 1.5)
+        return nd.gaussian_filter(borders.astype(np.float32), GAUSSIAN_SIGMA)
     else:
         return distance_map
