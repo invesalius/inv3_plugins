@@ -28,13 +28,12 @@ ctypedef s_coord coord
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-def jump_flooding(np.ndarray[np.float32_t, ndim=3] image_voronoy, np.ndarray[np.int32_t, ndim=2] sites, bool normalize):
+def jump_flooding(np.ndarray[np.float32_t, ndim=3] distance_map, np.ndarray[np.int32_t, ndim=3] map_owners, np.ndarray[np.int32_t, ndim=2] sites, bool normalize):
     cdef int size_x, size_y, size_z, number_sites
-    size_z = image_voronoy.shape[0]
-    size_y = image_voronoy.shape[1]
-    size_x = image_voronoy.shape[2]
+    size_z = distance_map.shape[0]
+    size_y = distance_map.shape[1]
+    size_x = distance_map.shape[2]
     number_sites = sites.shape[0]
-    cdef np.ndarray[np.int32_t, ndim=3] map_owners = np.zeros((size_z, size_y, size_x), dtype=np.int32)
     cdef np.ndarray[np.int32_t, ndim=1] counts = np.zeros(number_sites, dtype=np.int32)
     cdef np.ndarray[np.int32_t, ndim=2] new_sites = np.zeros((number_sites, 3), dtype=np.int32)
     cdef np.ndarray[np.float32_t, ndim=1] max_dists = np.zeros(number_sites, dtype=np.float32)
@@ -77,7 +76,7 @@ def jump_flooding(np.ndarray[np.float32_t, ndim=3] image_voronoy, np.ndarray[np.
                                         y1 = sites[idx1 - 1, 1]
                                         x1 = sites[idx1 - 1, 2]
 
-                                        dist0 = image_voronoy[z, y, x]
+                                        dist0 = distance_map[z, y, x]
                                         dist1 = ((z - z1)**2 + (y - y1)**2 + (x - x1)**2)**0.5
                                         if idx0 > 0:
                                             if dist1 < dist0:
@@ -85,9 +84,9 @@ def jump_flooding(np.ndarray[np.float32_t, ndim=3] image_voronoy, np.ndarray[np.
                                                 z0 = sites[idx1 - 1, 0]
                                                 y0 = sites[idx1 - 1, 1]
                                                 x0 = sites[idx1 - 1, 2]
-                                                image_voronoy[z, y, x] = dist1
+                                                distance_map[z, y, x] = dist1
                                         else:
-                                            image_voronoy[z, y, x] = dist1
+                                            distance_map[z, y, x] = dist1
                                             map_owners[z, y, x] = idx1
         offset_x = offset_x // 2
         offset_y = offset_y // 2
@@ -119,15 +118,15 @@ def jump_flooding(np.ndarray[np.float32_t, ndim=3] image_voronoy, np.ndarray[np.
                     z0 = new_sites[idx0, 0]
                     y0 = new_sites[idx0, 1]
                     x0 = new_sites[idx0, 2]
-                    image_voronoy[z, y, x] = ((z - z0)**2 + (y - y0)**2 + (x - x0)**2)**0.5
-                    max_dists[idx0] = max(max_dists[idx0], image_voronoy[z, y, x])
+                    distance_map[z, y, x] = ((z - z0)**2 + (y - y0)**2 + (x - x0)**2)**0.5
+                    max_dists[idx0] = max(max_dists[idx0], distance_map[z, y, x])
 
         print("Normalizing")
         for z in range(size_z):
             for y in range(size_y):
                 for x in range(size_x):
                     idx0 = map_owners[z, y, x] - 1
-                    image_voronoy[z, y, x] /= max_dists[idx0]
+                    distance_map[z, y, x] /= max_dists[idx0]
 
 
 

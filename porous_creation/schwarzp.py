@@ -31,16 +31,27 @@ def create_blobs(sx=256, sy=256, sz=256, gaussian=5):
     return image
 
 
-def create_voronoy(sx=256, sy=256, sz=256, number_sites=1000, normalize=False):
-    image = np.zeros((sz, sy, sx), dtype=np.float32)
+def create_voronoy(sx=256, sy=256, sz=256, number_sites=1000, normalize=False, border=True):
+    distance_map = np.zeros((sz, sy, sx), dtype=np.float32)
+    map_owners = np.zeros((sz, sy, sx), dtype=np.int32)
     sites = np.random.randint((0, 0, 0), (sz, sy, sx), (number_sites, 3), dtype=np.int32)
-    floodfill.jump_flooding(image, sites, normalize)
-    print(image.min(), image.max())
-    return image
+    floodfill.jump_flooding(distance_map, map_owners, sites, normalize)
+    if border:
+        if sz == 1:
+            gy, gx = np.gradient(map_owners[0])
+            mag = np.sqrt(gy*gy + gx*gx).reshape(sz, sy, sx)
+        else:
+            gz, gy, gx = np.gradient(map_owners)
+            mag = np.sqrt(gz*gz + gy*gy + gx*gx)
+        borders =  mag > 0
+        return nd.gaussian_filter(borders.astype(np.float32), 1.5)
+    else:
+        return distance_map
 
 
-def create_voronoy_non_random(sx=256, sy=256, sz=256, nsx=25, nsy=25, nsz=25, normalize=False, noise=False):
-    image = np.zeros((sz, sy, sx), dtype=np.float32)
+def create_voronoy_non_random(sx=256, sy=256, sz=256, nsx=25, nsy=25, nsz=25, normalize=False, noise=False, border=True):
+    distance_map = np.zeros((sz, sy, sx), dtype=np.float32)
+    map_owners = np.zeros((sz, sy, sx), dtype=np.int32)
     x = np.arange(nsx)
     y = np.arange(nsy)
     z = np.arange(nsz)
@@ -56,6 +67,15 @@ def create_voronoy_non_random(sx=256, sy=256, sz=256, nsx=25, nsy=25, nsz=25, no
     sites[:, 1] *= (sy / nsy)
     sites[:, 2] *= (sx / nsx)
     sites = np.array(sites, dtype=np.int32)
-    floodfill.jump_flooding(image, sites, normalize)
-    print(image.min(), image.max())
-    return image
+    floodfill.jump_flooding(distance_map, map_owners, sites, normalize)
+    if border:
+        if sz == 1:
+            gy, gx = np.gradient(map_owners[0])
+            mag = np.sqrt(gy**2 + gx**2).reshape(sz, sy, sx)
+        else:
+            gz, gy, gx = np.gradient(map_owners)
+            mag = np.sqrt(gz**2 + gy**2 + gx**2)
+        borders =  mag > 0
+        return nd.gaussian_filter(borders.astype(np.float32), 1.5)
+    else:
+        return distance_map

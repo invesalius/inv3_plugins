@@ -128,8 +128,9 @@ class GUISchwarzP(wx.Dialog):
                 number_sites = self.voronoy_panel.random_options.spin_nsites.GetValue()
                 #  distance = self.voronoy_panel.cb_distance.GetSelection()
                 normalize = self.voronoy_panel.cb_normalize.GetValue()
+                borders = self.voronoy_panel.cb_borders.GetValue()
                 self.np_img = np2bitmap(
-                    schwarzp.create_voronoy(size_x, size_y, 1, number_sites, normalize)[0]
+                    schwarzp.create_voronoy(size_x, size_y, 1, number_sites, normalize, borders)[0]
                 )
             else:
                 size_x = self.voronoy_panel.non_random_options.spin_size_x.GetValue()
@@ -141,8 +142,9 @@ class GUISchwarzP(wx.Dialog):
                 #  distance = self.voronoy_panel.cb_distance.GetSelection()
                 noise = self.voronoy_panel.non_random_options.cb_noise.GetValue()
                 normalize = self.voronoy_panel.cb_normalize.GetValue()
+                borders = self.voronoy_panel.cb_borders.GetValue()
                 self.np_img = np2bitmap(
-                    schwarzp.create_voronoy_non_random(size_x, size_y, 1, nsites_x, nsites_y, 1, normalize, noise)[0]
+                    schwarzp.create_voronoy_non_random(size_x, size_y, 3, nsites_x, nsites_y, 1, normalize, noise, borders)[0]
                 )
         else:
             init_x = self.schwarp_panel.spin_from_x.GetValue()
@@ -190,7 +192,8 @@ class GUISchwarzP(wx.Dialog):
                 number_sites = self.voronoy_panel.random_options.spin_nsites.GetValue()
                 #  distance = self.voronoy_panel.cb_distance.GetSelection()
                 normalize = self.voronoy_panel.cb_normalize.GetValue()
-                schwarp_f = schwarzp.create_voronoy(size_x, size_y, size_z, number_sites, normalize)
+                borders = self.voronoy_panel.cb_borders.GetValue()
+                schwarp_f = schwarzp.create_voronoy(size_x, size_y, size_z, number_sites, normalize, borders)
             else:
                 size_x = self.voronoy_panel.non_random_options.spin_size_x.GetValue()
                 size_y = self.voronoy_panel.non_random_options.spin_size_y.GetValue()
@@ -201,7 +204,8 @@ class GUISchwarzP(wx.Dialog):
                 #  distance = self.voronoy_panel.cb_distance.GetSelection()
                 noise = self.voronoy_panel.non_random_options.cb_noise.GetValue()
                 normalize = self.voronoy_panel.cb_normalize.GetValue()
-                schwarp_f = schwarzp.create_voronoy_non_random(size_x, size_y, size_z, nsites_x, nsites_y, nsites_z, normalize, noise)
+                borders = self.voronoy_panel.cb_borders.GetValue()
+                schwarp_f = schwarzp.create_voronoy_non_random(size_x, size_y, size_z, nsites_x, nsites_y, nsites_z, normalize, noise, borders)
         else:
             init_x = self.schwarp_panel.spin_from_x.GetValue()
             end_x = self.schwarp_panel.spin_to_x.GetValue()
@@ -450,6 +454,9 @@ class VoronoyPanel(wx.Panel):
         )
         self.cb_normalize.SetValue(True)
 
+        self.cb_borders = wx.CheckBox(self, -1, "Just borders")
+        self.cb_borders.SetValue(False)
+
         distribution_sizer = wx.BoxSizer(wx.HORIZONTAL)
         distribution_sizer.Add(lbl_distributions, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
         distribution_sizer.Add(self.cb_distribution, 1, wx.EXPAND | wx.ALL, 5)
@@ -459,6 +466,7 @@ class VoronoyPanel(wx.Panel):
         main_sizer.Add(self.random_options, 1, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.non_random_options, 1, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.cb_normalize, 0, wx.ALL, 5)
+        main_sizer.Add(self.cb_borders, 0, wx.ALL, 5)
 
         self.SetSizer(main_sizer)
         main_sizer.Fit(self)
@@ -468,6 +476,7 @@ class VoronoyPanel(wx.Panel):
         #  self.cb_distance.Bind(wx.EVT_COMBOBOX, self.OnSetValues)
         self.cb_distribution.Bind(wx.EVT_COMBOBOX, self.OnSetValues)
         self.cb_normalize.Bind(wx.EVT_CHECKBOX, self.OnSetValues)
+        self.cb_borders.Bind(wx.EVT_CHECKBOX, self.OnSetValues)
 
     def OnSetValues(self, evt):
         if self.cb_distribution.GetValue() == "Random":
@@ -546,13 +555,13 @@ class VoronoyNonRandomOptionsPanel(wx.Panel):
 
         # X
         lbl_nsite_x = wx.StaticText(self, -1, "Number of sites X:", style=wx.ALIGN_RIGHT)
-        self.spin_nsites_x = wx.SpinCtrl(self, -1, value="25", min=5, max=1000)
+        self.spin_nsites_x = wx.SpinCtrl(self, -1, value="10", min=5, max=1000)
         # Y`
         lbl_nsite_y = wx.StaticText(self, -1, "Number of sites Y:", style=wx.ALIGN_RIGHT)
-        self.spin_nsites_y = wx.SpinCtrl(self, -1, value="25", min=5, max=1000)
+        self.spin_nsites_y = wx.SpinCtrl(self, -1, value="10", min=5, max=1000)
         # Z
         lbl_nsite_z = wx.StaticText(self, -1, "Number of sites Z:", style=wx.ALIGN_RIGHT)
-        self.spin_nsites_z = wx.SpinCtrl(self, -1, value="25", min=5, max=1000)
+        self.spin_nsites_z = wx.SpinCtrl(self, -1, value="10", min=5, max=1000)
 
         self.cb_noise = wx.CheckBox(
             self, -1, "Add noise"
