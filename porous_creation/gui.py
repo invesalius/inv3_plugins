@@ -60,7 +60,7 @@ class GUISchwarzP(wx.Dialog):
             "iWP",
             "P_W_Hybrid",
             "Blobs",
-            "Voronoy",
+            "Voronoi",
         ]
         self.cb_option = wx.ComboBox(
             self, -1, options[0], choices=options, style=wx.CB_READONLY
@@ -68,10 +68,10 @@ class GUISchwarzP(wx.Dialog):
 
         self.schwarp_panel = SchwarzPPanel(self)
         self.blobs_panel = BlobsPanel(self)
-        self.voronoy_panel = VoronoyPanel(self)
+        self.voronoi_panel = VoronoiPanel(self)
 
         self.blobs_panel.Hide()
-        self.voronoy_panel.Hide()
+        self.voronoi_panel.Hide()
 
         self.image_panel = wx.Panel(self, -1)
         self.image_panel.SetMinSize(self.schwarp_panel.GetSizer().CalcMin())
@@ -93,7 +93,7 @@ class GUISchwarzP(wx.Dialog):
         main_sizer.Add(self.cb_option, 0, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.schwarp_panel, 0, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.blobs_panel, 0, wx.EXPAND | wx.ALL, 5)
-        main_sizer.Add(self.voronoy_panel, 0, wx.EXPAND | wx.ALL, 5)
+        main_sizer.Add(self.voronoi_panel, 0, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.image_panel, 2, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.cb_new_inv_instance, 0, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(button_sizer, 0, wx.EXPAND | wx.ALL, 5)
@@ -120,31 +120,31 @@ class GUISchwarzP(wx.Dialog):
             self.np_img = np2bitmap(
                 schwarzp.create_blobs(size_x, size_y, 1, gaussian)[0]
             )
-        elif self.cb_option.GetValue() == "Voronoy":
-            if self.voronoy_panel.cb_distribution.GetValue() == "Random":
-                size_x = self.voronoy_panel.random_options.spin_size_x.GetValue()
-                size_y = self.voronoy_panel.random_options.spin_size_y.GetValue()
-                size_z = self.voronoy_panel.random_options.spin_size_z.GetValue()
-                number_sites = self.voronoy_panel.random_options.spin_nsites.GetValue()
-                #  distance = self.voronoy_panel.cb_distance.GetSelection()
-                normalize = self.voronoy_panel.cb_normalize.GetValue()
-                borders = self.voronoy_panel.cb_borders.GetValue()
+        elif self.cb_option.GetValue() == "Voronoi":
+            if self.voronoi_panel.cb_distribution.GetValue() == "Random":
+                size_x = self.voronoi_panel.random_options.spin_size_x.GetValue()
+                size_y = self.voronoi_panel.random_options.spin_size_y.GetValue()
+                size_z = self.voronoi_panel.random_options.spin_size_z.GetValue()
+                number_sites = self.voronoi_panel.random_options.spin_nsites.GetValue()
+                #  distance = self.voronoi_panel.cb_distance.GetSelection()
+                normalize = self.voronoi_panel.cb_normalize.GetValue()
+                borders = self.voronoi_panel.cb_borders.GetValue()
                 self.np_img = np2bitmap(
-                    schwarzp.create_voronoy(size_x, size_y, 1, number_sites, normalize, borders)[0]
+                    schwarzp.create_voronoi(size_x, size_y, 1, number_sites, normalize, borders)[0]
                 )
             else:
-                size_x = self.voronoy_panel.non_random_options.spin_size_x.GetValue()
-                size_y = self.voronoy_panel.non_random_options.spin_size_y.GetValue()
-                size_z = self.voronoy_panel.non_random_options.spin_size_z.GetValue()
-                nsites_x = self.voronoy_panel.non_random_options.spin_nsites_x .GetValue()
-                nsites_y = self.voronoy_panel.non_random_options.spin_nsites_y.GetValue()
-                nsites_z = self.voronoy_panel.non_random_options.spin_nsites_z.GetValue()
-                #  distance = self.voronoy_panel.cb_distance.GetSelection()
-                noise = self.voronoy_panel.non_random_options.cb_noise.GetValue()
-                normalize = self.voronoy_panel.cb_normalize.GetValue()
-                borders = self.voronoy_panel.cb_borders.GetValue()
+                size_x = self.voronoi_panel.non_random_options.spin_size_x.GetValue()
+                size_y = self.voronoi_panel.non_random_options.spin_size_y.GetValue()
+                size_z = self.voronoi_panel.non_random_options.spin_size_z.GetValue()
+                nsites_x = self.voronoi_panel.non_random_options.spin_nsites_x .GetValue()
+                nsites_y = self.voronoi_panel.non_random_options.spin_nsites_y.GetValue()
+                nsites_z = self.voronoi_panel.non_random_options.spin_nsites_z.GetValue()
+                #  distance = self.voronoi_panel.cb_distance.GetSelection()
+                noise = self.voronoi_panel.non_random_options.cb_noise.GetValue()
+                normalize = self.voronoi_panel.cb_normalize.GetValue()
+                borders = self.voronoi_panel.cb_borders.GetValue()
                 self.np_img = np2bitmap(
-                    schwarzp.create_voronoy_non_random(size_x, size_y, 3, nsites_x, nsites_y, 1, normalize, noise, borders)[0]
+                    schwarzp.create_voronoi_non_random(size_x, size_y, 3, nsites_x, nsites_y, 1, normalize, noise, borders)[0]
                 )
         else:
             init_x = self.schwarp_panel.spin_from_x.GetValue()
@@ -184,28 +184,28 @@ class GUISchwarzP(wx.Dialog):
             size_z = self.blobs_panel.spin_size_z.GetValue()
             gaussian = self.blobs_panel.spin_gaussian.GetValue()
             schwarp_f = schwarzp.create_blobs(size_x, size_y, size_z, gaussian)
-        elif self.cb_option.GetValue() == "Voronoy":
-            if self.voronoy_panel.cb_distribution.GetValue() == "Random":
-                size_x = self.voronoy_panel.random_options.spin_size_x.GetValue()
-                size_y = self.voronoy_panel.random_options.spin_size_y.GetValue()
-                size_z = self.voronoy_panel.random_options.spin_size_z.GetValue()
-                number_sites = self.voronoy_panel.random_options.spin_nsites.GetValue()
-                #  distance = self.voronoy_panel.cb_distance.GetSelection()
-                normalize = self.voronoy_panel.cb_normalize.GetValue()
-                borders = self.voronoy_panel.cb_borders.GetValue()
-                schwarp_f = schwarzp.create_voronoy(size_x, size_y, size_z, number_sites, normalize, borders)
+        elif self.cb_option.GetValue() == "Voronoi":
+            if self.voronoi_panel.cb_distribution.GetValue() == "Random":
+                size_x = self.voronoi_panel.random_options.spin_size_x.GetValue()
+                size_y = self.voronoi_panel.random_options.spin_size_y.GetValue()
+                size_z = self.voronoi_panel.random_options.spin_size_z.GetValue()
+                number_sites = self.voronoi_panel.random_options.spin_nsites.GetValue()
+                #  distance = self.voronoi_panel.cb_distance.GetSelection()
+                normalize = self.voronoi_panel.cb_normalize.GetValue()
+                borders = self.voronoi_panel.cb_borders.GetValue()
+                schwarp_f = schwarzp.create_voronoi(size_x, size_y, size_z, number_sites, normalize, borders)
             else:
-                size_x = self.voronoy_panel.non_random_options.spin_size_x.GetValue()
-                size_y = self.voronoy_panel.non_random_options.spin_size_y.GetValue()
-                size_z = self.voronoy_panel.non_random_options.spin_size_z.GetValue()
-                nsites_x = self.voronoy_panel.non_random_options.spin_nsites_x .GetValue()
-                nsites_y = self.voronoy_panel.non_random_options.spin_nsites_y.GetValue()
-                nsites_z = self.voronoy_panel.non_random_options.spin_nsites_z.GetValue()
-                #  distance = self.voronoy_panel.cb_distance.GetSelection()
-                noise = self.voronoy_panel.non_random_options.cb_noise.GetValue()
-                normalize = self.voronoy_panel.cb_normalize.GetValue()
-                borders = self.voronoy_panel.cb_borders.GetValue()
-                schwarp_f = schwarzp.create_voronoy_non_random(size_x, size_y, size_z, nsites_x, nsites_y, nsites_z, normalize, noise, borders)
+                size_x = self.voronoi_panel.non_random_options.spin_size_x.GetValue()
+                size_y = self.voronoi_panel.non_random_options.spin_size_y.GetValue()
+                size_z = self.voronoi_panel.non_random_options.spin_size_z.GetValue()
+                nsites_x = self.voronoi_panel.non_random_options.spin_nsites_x .GetValue()
+                nsites_y = self.voronoi_panel.non_random_options.spin_nsites_y.GetValue()
+                nsites_z = self.voronoi_panel.non_random_options.spin_nsites_z.GetValue()
+                #  distance = self.voronoi_panel.cb_distance.GetSelection()
+                noise = self.voronoi_panel.non_random_options.cb_noise.GetValue()
+                normalize = self.voronoi_panel.cb_normalize.GetValue()
+                borders = self.voronoi_panel.cb_borders.GetValue()
+                schwarp_f = schwarzp.create_voronoi_non_random(size_x, size_y, size_z, nsites_x, nsites_y, nsites_z, normalize, noise, borders)
         else:
             init_x = self.schwarp_panel.spin_from_x.GetValue()
             end_x = self.schwarp_panel.spin_to_x.GetValue()
@@ -243,17 +243,17 @@ class GUISchwarzP(wx.Dialog):
     def OnSetValues(self, evt):
         if self.cb_option.GetValue() == "Blobs":
             self.schwarp_panel.Hide()
-            self.voronoy_panel.Hide()
+            self.voronoi_panel.Hide()
             self.blobs_panel.Show()
             self.Layout()
-        elif self.cb_option.GetValue() == "Voronoy":
+        elif self.cb_option.GetValue() == "Voronoi":
             self.schwarp_panel.Hide()
             self.blobs_panel.Hide()
-            self.voronoy_panel.Show()
+            self.voronoi_panel.Show()
             self.Layout()
         else:
             self.blobs_panel.Hide()
-            self.voronoy_panel.Hide()
+            self.voronoi_panel.Hide()
             self.schwarp_panel.Show()
             self.Layout()
 
@@ -430,7 +430,7 @@ class BlobsPanel(wx.Panel):
         self.Parent.OnSetValues(evt)
 
 
-class VoronoyPanel(wx.Panel):
+class VoronoiPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
         self._init_gui()
@@ -440,8 +440,8 @@ class VoronoyPanel(wx.Panel):
         distributions = ["Random", "Non-random"]
         lbl_distributions = wx.StaticText(self, -1, "Distribution", style=wx.CB_READONLY)
         self.cb_distribution = wx.ComboBox(self, -1, value=distributions[0], choices=distributions)
-        self.random_options = VoronoyRandomOptionsPanel(self)
-        self.non_random_options = VoronoyNonRandomOptionsPanel(self)
+        self.random_options = VoronoiRandomOptionsPanel(self)
+        self.non_random_options = VoronoiNonRandomOptionsPanel(self)
         self.non_random_options.Hide()
 
         #  lbl_distance = wx.StaticText(self, -1, "Distance", style=wx.ALIGN_RIGHT)
@@ -489,7 +489,7 @@ class VoronoyPanel(wx.Panel):
         self.Parent.OnSetValues(evt)
 
 
-class VoronoyRandomOptionsPanel(wx.Panel):
+class VoronoiRandomOptionsPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
         self._init_gui()
@@ -536,7 +536,7 @@ class VoronoyRandomOptionsPanel(wx.Panel):
         self.Parent.OnSetValues(evt)
 
 
-class VoronoyNonRandomOptionsPanel(wx.Panel):
+class VoronoiNonRandomOptionsPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
         self._init_gui()

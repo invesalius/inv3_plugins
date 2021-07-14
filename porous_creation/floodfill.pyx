@@ -133,7 +133,7 @@ def jump_flooding(np.ndarray[np.float32_t, ndim=3] distance_map, np.ndarray[np.i
 @cython.boundscheck(False) # turn of bounds-checking for entire function
 @cython.wraparound(False)
 @cython.nonecheck(False)
-def floodfill_voronoy(np.ndarray[np.float32_t, ndim=3] data, list seeds, np.ndarray[np.uint8_t, ndim=3] strct, int distance):
+def floodfill_voronoi(np.ndarray[np.float32_t, ndim=3] data, list seeds, np.ndarray[np.uint8_t, ndim=3] strct, int distance):
     cdef int x, y, z, sx, sy, sz
     cdef int dx, dy, dz
     cdef int odx, ody, odz

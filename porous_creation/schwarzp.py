@@ -34,7 +34,7 @@ def create_blobs(sx=256, sy=256, sz=256, gaussian=5):
     return image
 
 
-def create_voronoy(sx=256, sy=256, sz=256, number_sites=1000, normalize=False, border=True):
+def create_voronoi(sx=256, sy=256, sz=256, number_sites=1000, normalize=False, border=True):
     distance_map = np.zeros((sz, sy, sx), dtype=np.float32)
     map_owners = np.zeros((sz, sy, sx), dtype=np.int32)
     sites = np.random.randint((0, 0, 0), (sz, sy, sx), (number_sites, 3), dtype=np.int32)
@@ -52,7 +52,7 @@ def create_voronoy(sx=256, sy=256, sz=256, number_sites=1000, normalize=False, b
         return distance_map
 
 
-def create_voronoy_non_random(sx=256, sy=256, sz=256, nsx=25, nsy=25, nsz=25, normalize=False, noise=False, border=True):
+def create_voronoi_non_random(sx=256, sy=256, sz=256, nsx=25, nsy=25, nsz=25, normalize=False, noise=False, border=True):
     distance_map = np.zeros((sz, sy, sx), dtype=np.float32)
     map_owners = np.zeros((sz, sy, sx), dtype=np.int32)
     x = np.arange(nsx)
