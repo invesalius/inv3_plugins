@@ -114,11 +114,6 @@ class Window(wx.Dialog):
             print(f"It was removed? {removed}")
 
             s = slc.Slice()
-            if self.preview_matrix is not None:
-                filename = self.preview_matrix.filename
-                del self.preview_matrix
-                os.remove(filename)
-
             try:
                 del s.aux_matrices["REMOVE_TINY"]
             except KeyError:
@@ -126,6 +121,11 @@ class Window(wx.Dialog):
 
             if s.to_show_aux == "REMOVE_TINY":
                 s.to_show_aux = ""
+
+            if self.preview_matrix is not None:
+                filename = self.preview_matrix.filename
+                del self.preview_matrix
+                os.remove(filename)
 
             Publisher.sendMessage("Reload actual slice")
 
