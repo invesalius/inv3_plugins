@@ -1,11 +1,9 @@
 import os
 import sys
-from distutils.core import setup
-from distutils.extension import Extension
+import setuptools
 
 import numpy
-from Cython.Build import cythonize
-from Cython.Distutils import build_ext
+from Cython.Build import cythonize, build_ext
 
 if sys.platform == "darwin":
     unix_copt = ["-Xpreprocessor", "-fopenmp", "-lomp"]
@@ -39,9 +37,9 @@ class build_ext_subclass(build_ext):
         build_ext.build_extensions(self)
 
 
-setup(
+setuptools.setup(
     cmdclass={"build_ext": build_ext_subclass},
-    ext_modules=cythonize(
-        [Extension("floodfill", ["floodfill.pyx"], language="c++",),]
-    ),
+    ext_modules=cythonize([
+        setuptools.Extension("floodfill", ["floodfill.pyx"], language="c++",),
+    ]),
 )
