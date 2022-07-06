@@ -1,9 +1,19 @@
 import sys
-import time
 
 import numpy as np
-import vtk
-from vtk.util import numpy_support
+from vtkmodules.util import numpy_support
+from vtkmodules.vtkCommonCore import vtkIdList, vtkIdTypeArray
+from vtkmodules.vtkCommonDataModel import vtkSelection, vtkSelectionNode
+from vtkmodules.vtkFiltersCore import vtkCleanPolyData, vtkIdFilter
+from vtkmodules.vtkFiltersExtraction import vtkExtractSelection
+from vtkmodules.vtkFiltersGeometry import vtkGeometryFilter
+from vtkmodules.vtkRenderingCore import (
+    vtkActor,
+    vtkPolyDataMapper,
+    vtkRenderer,
+    vtkRenderWindow,
+    vtkSelectVisiblePoints,
+)
 
 
 def remove_non_visible_faces(
@@ -13,17 +23,17 @@ def remove_non_visible_faces(
 ):
     polydata.BuildLinks()
 
-    mapper = vtk.vtkPolyDataMapper()
+    mapper = vtkPolyDataMapper()
     mapper.SetInputData(polydata)
     mapper.Update()
 
-    actor = vtk.vtkActor()
+    actor = vtkActor()
     actor.SetMapper(mapper)
 
-    renderer = vtk.vtkRenderer()
+    renderer = vtkRenderer()
     renderer.AddActor(actor)
 
-    render_window = vtk.vtkRenderWindow()
+    render_window = vtkRenderWindow()
     render_window.AddRenderer(renderer)
     render_window.SetSize(800, 800)
     render_window.OffScreenRenderingOn()
@@ -37,7 +47,7 @@ def remove_non_visible_faces(
     mag = np.linalg.norm(v)
     vn = v / mag
 
-    id_filter = vtk.vtkIdFilter()
+    id_filter = vtkIdFilter()
     id_filter.SetInputData(polydata)
     id_filter.PointIdsOn()
     id_filter.Update()
@@ -50,7 +60,7 @@ def remove_non_visible_faces(
         renderer.ResetCamera()
         render_window.Render()
 
-        select_visible_points = vtk.vtkSelectVisiblePoints()
+        select_visible_points = vtkSelectVisiblePoints()
         select_visible_points.SetInputData(id_filter.GetOutput())
         select_visible_points.SetRenderer(renderer)
         #  select_visible_points.SelectInvisibleOn()
@@ -63,41 +73,43 @@ def remove_non_visible_faces(
             set_points = set(id_points.tolist())
         else:
             set_points.update(id_points.tolist())
-        #  id_list = vtk.vtkIdList()
+        #  id_list = vtkIdList()
         #  output.GetVerts().GetCell(1000, id_list)
 
     if remove_visible:
         set_points = set(range(polydata.GetNumberOfPoints())) - set_points
     cells_ids = set()
     for p_id in set_points:
-        id_list = vtk.vtkIdList()
+        id_list = vtkIdList()
         polydata.GetPointCells(p_id, id_list)
         for i in range(id_list.GetNumberOfIds()):
             cells_ids.add(id_list.GetId(i))
 
     try:
-        id_list = numpy_support.numpy_to_vtkIdTypeArray(np.array(list(cells_ids), dtype=np.int64))
+        id_list = numpy_support.numpy_to_vtkIdTypeArray(
+            np.array(list(cells_ids), dtype=np.int64)
+        )
     except ValueError:
-        id_list = vtk.vtkIdTypeArray()
+        id_list = vtkIdTypeArray()
 
-    selection_node = vtk.vtkSelectionNode()
-    selection_node.SetFieldType(vtk.vtkSelectionNode.CELL)
-    selection_node.SetContentType(vtk.vtkSelectionNode.INDICES)
+    selection_node = vtkSelectionNode()
+    selection_node.SetFieldType(vtkSelectionNode.CELL)
+    selection_node.SetContentType(vtkSelectionNode.INDICES)
     selection_node.SetSelectionList(id_list)
 
-    selection = vtk.vtkSelection()
+    selection = vtkSelection()
     selection.AddNode(selection_node)
 
-    extract_selection = vtk.vtkExtractSelection()
+    extract_selection = vtkExtractSelection()
     extract_selection.SetInputData(0, polydata)
     extract_selection.SetInputData(1, selection)
     extract_selection.Update()
 
-    geometry_filter = vtk.vtkGeometryFilter()
+    geometry_filter = vtkGeometryFilter()
     geometry_filter.SetInputData(extract_selection.GetOutput())
     geometry_filter.Update()
 
-    clean_polydata = vtk.vtkCleanPolyData()
+    clean_polydata = vtkCleanPolyData()
     clean_polydata.SetInputData(geometry_filter.GetOutput())
     clean_polydata.Update()
 
@@ -105,10 +117,13 @@ def remove_non_visible_faces(
 
 
 def main():
+    from vtkmodules.vtkIOGeometry import vtkSTLReader
+    from vtkmodules.vtkIOPLY import vtkPLYWriter
+
     input_file = sys.argv[1]
     ouput_file = sys.argv[2]
 
-    reader = vtk.vtkSTLReader()
+    reader = vtkSTLReader()
     reader.SetFileName(input_file)
     reader.Update()
 
@@ -117,7 +132,7 @@ def main():
         [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]],
     )
 
-    writer = vtk.vtkPLYWriter()
+    writer = vtkPLYWriter()
     writer.SetInputData(output_polydata)
     writer.SetFileName(ouput_file)
     writer.Write()
