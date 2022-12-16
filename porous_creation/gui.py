@@ -70,6 +70,8 @@ class GUISchwarzP(wx.Dialog):
         self.blobs_panel = BlobsPanel(self)
         self.voronoi_panel = VoronoiPanel(self)
 
+        self.spacing_panel = SpacingPanel(self)
+
         self.blobs_panel.Hide()
         self.voronoi_panel.Hide()
 
@@ -94,6 +96,7 @@ class GUISchwarzP(wx.Dialog):
         main_sizer.Add(self.schwarp_panel, 0, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.blobs_panel, 0, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.voronoi_panel, 0, wx.EXPAND | wx.ALL, 5)
+        main_sizer.Add(self.spacing_panel, 0, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.image_panel, 2, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(self.cb_new_inv_instance, 0, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(button_sizer, 0, wx.EXPAND | wx.ALL, 5)
@@ -230,12 +233,13 @@ class GUISchwarzP(wx.Dialog):
                 size_y,
                 size_z,
             )
-
+        spacing = self.spacing_panel.get_spacing()
         schwarp_i16 = imagedata_utils.image_normalize(schwarp_f, min_=-1000, max_=1000)
         Publisher.sendMessage(
             "Create project from matrix",
             name="SchwarzP",
             matrix=schwarp_i16,
+            spacing=spacing,
             new_instance=self.cb_new_inv_instance.GetValue(),
         )
         self.Close()
@@ -276,6 +280,40 @@ class GUISchwarzP(wx.Dialog):
         gc = wx.GraphicsContext.Create(dc)
         gc.DrawBitmap(self.np_img, cx, cy, isx, isy)
         gc.Flush()
+
+
+class SpacingPanel(wx.Panel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._init_gui()
+
+    def _init_gui(self):
+        self.spin_spc_x = wx.SpinCtrlDouble(self, -1, value="1.0", min=0.001, max=1000.0, inc=0.001)
+        self.spin_spc_y = wx.SpinCtrlDouble(self, -1, value="1.0", min=0.001, max=1000.0, inc=0.001)
+        self.spin_spc_z = wx.SpinCtrlDouble(self, -1, value="1.0", min=0.001, max=1000.0, inc=0.001)
+
+        sizer_spacing = wx.StaticBoxSizer(
+            wx.StaticBox(self, -1, "Spacing"), wx.HORIZONTAL
+        )
+        sizer_spacing.Add(wx.StaticText(self, -1, "X"), 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
+        sizer_spacing.Add(self.spin_spc_x, 0, wx.ALL, 5)
+        sizer_spacing.Add(wx.StaticText(self, -1, "Y"), 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
+        sizer_spacing.Add(self.spin_spc_y, 0, wx.ALL, 5)
+        sizer_spacing.Add(wx.StaticText(self, -1, "Z"), 0, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 5)
+        sizer_spacing.Add(self.spin_spc_z, 0, wx.ALL, 5)
+
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+        main_sizer.Add(sizer_spacing, 0, wx.EXPAND | wx.ALL, 5)
+
+        self.SetSizer(main_sizer)
+        main_sizer.Fit(self)
+        self.Layout()
+
+    def get_spacing(self):
+        spacing_x = self.spin_spc_x.GetValue()
+        spacing_y = self.spin_spc_y.GetValue()
+        spacing_z = self.spin_spc_z.GetValue()
+        return (spacing_x, spacing_y, spacing_z)
 
 
 class SchwarzPPanel(wx.Panel):
