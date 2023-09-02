@@ -21,7 +21,6 @@ class FunctionalOverlayGUI(wx.Dialog):
         self.surfaces_combo.Append("TimeFrame")
         self.surfaces_combo.Append("Yeo-7")
         self.surfaces_combo.Append("Yeo-17")
-        self.surfaces_combo.Append("Betamaps")
         self.surfaces_combo.Append("Seedbased")
         self.surfaces_combo.Append("Gradients-Connectivity")
         
