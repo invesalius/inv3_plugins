@@ -33,7 +33,20 @@ class FunctionalOverlayStyle(styles.DefaultInteractorStyle):
                 self.y7 = filename
             elif filename.startswith('yeo17_display'):
                 self.y17 = filename
-
+        
+        if not os.path.exists(self.datapath + self.funcslice_file):
+            wx.MessageBox(("The overlay-able functional slice file is not found"), ("InVesalius 3"))
+            return
+        if not os.path.exists(self.datapath + self.G1):
+            wx.MessageBox(("The overlay-able functional gradient file is not found"), ("InVesalius 3"))
+            return
+        if not os.path.exists(self.datapath + self.y7):
+            wx.MessageBox(("The overlay-able yeo7 networks file is not found"), ("InVesalius 3"))
+            return
+        if not os.path.exists(self.datapath + self.y17):
+            wx.MessageBox(("The overlay-able yeo17 networks file is not found"), ("InVesalius 3"))
+            return        
+        
         self.func_frame = nib.load(self.datapath + self.funcslice_file).get_fdata()
         self.func_conn = nib.load(self.datapath + self.G1).get_fdata()
         self.yeo7 = nib.load(self.datapath + self.y7).get_fdata()
