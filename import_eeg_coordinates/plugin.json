@@ -1,0 +1,5 @@
+{
+    "name": "Import EEG coordinates",
+    "description": "Import EEG coordinates",
+    "enable-startup": false
+}
