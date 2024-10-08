@@ -63,20 +63,21 @@ class Window(wx.Dialog):
                 if conversion_radio_box is not None:
                     data = np.genfromtxt(fname=filename, delimiter=',', encoding=None, dtype=None, skip_header=0)
                     for i in data:
-                        position_world = [i[1], -i[2], i[3]]
+                        position_world = [i[1], i[2], i[3]]
                         convert_to_inv = conversion_radio_box.GetSelection() == const.SURFACE_SPACE_WORLD
                         if convert_to_inv:
                             affine = sl.Slice().affine.copy()
                             affine = np.linalg.inv(affine)
                             position = img_utils.convert_world_to_voxel(position_world, affine)[0].tolist()
-                            position[1] += 2
+                            position_voxel = img_utils.convert_invesalius_to_voxel(position).tolist()
                         else:
-                            position = position_world
+                            position_voxel = position_world
+                            position_voxel[2] = -position_world[2]
 
                         Publisher.sendMessage(
                             "Create marker",
                             marker_type=MarkerType.LANDMARK,
-                            position=position,
+                            position=position_voxel,
                             label=i[4],
                         )
         except:
