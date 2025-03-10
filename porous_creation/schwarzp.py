@@ -2,7 +2,7 @@ import numpy as np
 from scipy import ndimage as nd
 import random
 
-from . import floodfill
+from . import floodfill_voronoi
 
 
 GAUSSIAN_SIGMA = 1.5
@@ -38,7 +38,7 @@ def create_voronoi(sx=256, sy=256, sz=256, number_sites=1000, normalize=False, b
     distance_map = np.zeros((sz, sy, sx), dtype=np.float32)
     map_owners = np.zeros((sz, sy, sx), dtype=np.int32)
     sites = np.random.randint((0, 0, 0), (sz, sy, sx), (number_sites, 3), dtype=np.int32)
-    floodfill.jump_flooding(distance_map, map_owners, sites, normalize)
+    floodfill_voronoi.jump_flooding(distance_map, map_owners, sites, normalize)
     if border:
         if sz == 1:
             gy, gx = np.gradient(map_owners[0])
@@ -70,7 +70,7 @@ def create_voronoi_non_random(sx=256, sy=256, sz=256, nsx=25, nsy=25, nsz=25, no
     sites[:, 1] *= (sy / nsy)
     sites[:, 2] *= (sx / nsx)
     sites = np.array(sites, dtype=np.int32)
-    floodfill.jump_flooding(distance_map, map_owners, sites, normalize)
+    floodfill_voronoi.jump_flooding(distance_map, map_owners, sites, normalize)
     if border:
         if sz == 1:
             gy, gx = np.gradient(map_owners[0])
