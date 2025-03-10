@@ -40,6 +40,6 @@ class build_ext_subclass(build_ext):
 setuptools.setup(
     cmdclass={"build_ext": build_ext_subclass},
     ext_modules=cythonize([
-        setuptools.Extension("floodfill", ["floodfill.pyx"], language="c++",),
+        setuptools.Extension("floodfill_voronoi", ["floodfill_voronoi.pyx"], language="c++",),
     ]),
 )
