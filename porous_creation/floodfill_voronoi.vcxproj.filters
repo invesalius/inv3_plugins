@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\soumy\OneDrive\Desktop\invesalius3\plugins\porous_creation\floodfill_voronoi.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\soumy\OneDrive\Desktop\invesalius3\CMakeFiles\fac493fdc471f237c2336b731e6c7ce8\floodfill_voronoi.cxx.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\soumy\OneDrive\Desktop\invesalius3\plugins\porous_creation\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{8F1E2363-39DB-3D07-AADE-89FF2A6E4D45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{B1122F73-8815-3EB2-B7DD-1F30B48551F7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

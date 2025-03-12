@@ -1,0 +1,20 @@
+^C:\USERS\SOUMY\ONEDRIVE\DESKTOP\INVESALIUS3\CMAKEFILES\FAC493FDC471F237C2336B731E6C7CE8\FLOODFILL_VORONOI.CXX.RULE
+setlocal
+..\..\invesalius_venv\Scripts\python.exe -m cython --cplus C:/Users/soumy/OneDrive/Desktop/invesalius3/plugins/porous_creation/floodfill_voronoi.pyx --output-file floodfill_voronoi.cxx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\SOUMY\ONEDRIVE\DESKTOP\INVESALIUS3\PLUGINS\POROUS_CREATION\CMAKELISTS.TXT
+setlocal
+C:\Users\soumy\AppData\Local\Temp\pip-build-env-_36vjnvi\normal\Lib\site-packages\cmake\data\bin\cmake.exe -SC:/Users/soumy/OneDrive/Desktop/invesalius3 -BC:/Users/soumy/OneDrive/Desktop/invesalius3 --check-stamp-file C:/Users/soumy/OneDrive/Desktop/invesalius3/plugins/porous_creation/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
