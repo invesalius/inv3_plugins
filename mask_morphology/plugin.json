@@ -1,0 +1,5 @@
+{
+    "name": "Mask Morphology",
+    "description": "Apply morphological operations (erosion/dilation) to the current mask",
+    "enable-startup": true
+} 
