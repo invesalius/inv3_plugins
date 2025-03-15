@@ -16,6 +16,9 @@ class Window(wx.Dialog):
         
         self._init_gui()
         self._bind_ps_events()
+
+        # to get the actor of default selected surface once the plugin is loaded
+        # this.SetActor() then extracts the lighting properties of the actor
         if self.surface_combo.GetCount() > 0:
             Publisher.sendMessage("Get Actor", surface_index=self.surface_combo.GetSelection())
 
