@@ -57,8 +57,7 @@ class Window(wx.Dialog):
         main_sizer.Add(lighting_sizer, 1, wx.EXPAND | wx.ALL, 5)
 
         self.SetSizer(main_sizer)
-        self.SetMinSize((300, 400))
-        self.SetSize((300, 400))
+        main_sizer.Fit(self)
         self.Layout()
 
     def _bind_ps_events(self):
