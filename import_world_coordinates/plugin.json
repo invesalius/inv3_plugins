@@ -1,0 +1,5 @@
+{
+    "name": "Import world coordinates",
+    "description": "Import world coordinates into invesalius coordinate system",
+    "enable-startup": false
+}
