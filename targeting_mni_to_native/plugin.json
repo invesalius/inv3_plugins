@@ -1,0 +1,5 @@
+{
+    "name": "Import MNI coordinates",
+    "description": "Import and transform MNI coordinates to subject native space. (requires antspyx)",
+    "enable-startup": false
+}
