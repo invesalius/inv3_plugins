@@ -308,7 +308,7 @@ class MNItoNativeDialog(wx.Dialog):
             # Conditionally create marker
             if self.create_marker_cb.IsChecked():
                 wx.CallAfter(Publisher.sendMessage, "Create marker", label=region_label)
-                wx.CallAfter(Publisher.sendMessage, "Create coil target from landmark")
+                wx.CallAfter(Publisher.sendMessage, "Create coil target from landmark", label=region_label)
 
             self.save_btn.Enable()
             self._update_status("✅ Done")
