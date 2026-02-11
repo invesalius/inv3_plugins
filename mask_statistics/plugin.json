@@ -1,0 +1,8 @@
+{
+    "name": "Mask Statistics",
+    "description": "Displays detailed statistics about the currently selected mask (voxels, volume, dimensions)",
+    "author": "Prateek Rai",
+    "version": "1.0",
+    "enable-startup": true,
+    "entry_point": "main.py"
+}
