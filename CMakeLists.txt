@@ -1,2 +1,0 @@
-add_subdirectory(porous_creation)
-add_subdirectory(remove_tiny_objects)

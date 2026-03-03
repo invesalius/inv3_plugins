@@ -8,7 +8,7 @@ import wx
 from invesalius import project
 from pubsub import pub as Publisher
 
-from . import count
+from invesalius_rs import count_regions
 
 INIT_MIN_SIZE = "10"
 
@@ -43,7 +43,7 @@ class Window(wx.Dialog):
         if self.mask:
             s.do_threshold_to_all_slices()
             labels, num_labels = self._find_regions(self.mask.matrix[1:, 1:, 1:])
-            counts = count.count_regions(labels, num_labels)
+            counts = count_regions(labels, num_labels)
             self.txt_num_regions.SetValue(str(num_labels))
 
             if self.preview_matrix is None:
