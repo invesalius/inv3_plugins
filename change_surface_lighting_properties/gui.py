@@ -17,10 +17,7 @@ class Window(wx.Dialog):
         self._init_gui()
         self._bind_ps_events()
 
-        # to get the actor of default selected surface once the plugin is loaded
-        # this.SetActor() then extracts the lighting properties of the actor
-        if self.surface_combo.GetCount() > 0:
-            Publisher.sendMessage("Get Actor", surface_index=self.surface_combo.GetSelection())
+        self.on_update_surfaces()
 
     def _init_gui(self):
         surface_sizer = wx.StaticBoxSizer(wx.StaticBox(self, -1, "Surface"), wx.VERTICAL)
@@ -68,6 +65,10 @@ class Window(wx.Dialog):
     
     def SetActor(self, e_field_actor):
         self.current_actor = e_field_actor
+        for slider in (self.ambient_slider, self.diffuse_slider, self.specular_slider):
+            slider.Enable(e_field_actor is not None)
+        if e_field_actor is None:
+            return
         self.ambient_slider.SetValue(int(e_field_actor.GetProperty().GetAmbient() * 100))
         self.diffuse_slider.SetValue(int(e_field_actor.GetProperty().GetDiffuse() * 100))
         self.specular_slider.SetValue(int(e_field_actor.GetProperty().GetSpecular() * 100))
@@ -75,12 +76,12 @@ class Window(wx.Dialog):
     def on_update_surfaces(self, *args, **_kwargs):
         last_idx = self.surface_combo.GetSelection()
         self.fill_surfaces_combo()
-        if last_idx < len(self.surfaces_combo.GetItems()):
-            self.surface_combo.SetSelection(last_idx)
-            Publisher.sendMessage("Get Actor", surface_index=last_idx)
-        else:
-            self.surface_combo.SetSelection(0)
-            Publisher.sendMessage("Get Actor", surface_index=0)
+        if self.surface_combo.GetCount() == 0:
+            self.SetActor(None)
+            return
+        last_idx = min(max(last_idx, 0), self.surface_combo.GetCount() - 1)
+        self.surface_combo.SetSelection(last_idx)
+        Publisher.sendMessage("Get Actor", surface_index=last_idx)
         
 
     def fill_surfaces_combo(self):
@@ -101,15 +102,18 @@ class Window(wx.Dialog):
 
     def OnAmbient(self, _event):
         value = self.ambient_slider.GetValue() / 100
-        Publisher.sendMessage("Set Ambient", value=value, actor=self.current_actor)
+        surface = project.Project().surface_dict[self.surface_combo.GetSelection()]
+        Publisher.sendMessage("Set Ambient", value=value, actor=self.current_actor, surface=surface)
 
     def OnDiffuse(self, _event):
         value = self.diffuse_slider.GetValue() / 100
-        Publisher.sendMessage("Set Diffuse", value=value, actor=self.current_actor)
+        surface = project.Project().surface_dict[self.surface_combo.GetSelection()]
+        Publisher.sendMessage("Set Diffuse", value=value, actor=self.current_actor, surface=surface)
 
     def OnSpecular(self, _event):
         value = self.specular_slider.GetValue() / 100
-        Publisher.sendMessage("Set Specular", value=value, actor=self.current_actor)
+        surface = project.Project().surface_dict[self.surface_combo.GetSelection()]
+        Publisher.sendMessage("Set Specular", value=value, actor=self.current_actor, surface=surface)
 
 if __name__ == "__main__":
     app = wx.App()
