@@ -2,6 +2,7 @@ import os
 import tempfile
 
 import invesalius.data.slice_ as slc
+import invesalius.session as ses
 import numpy as np
 import scipy.ndimage as nd
 import wx
@@ -34,7 +35,7 @@ class Window(wx.Dialog):
             self.mask.add_modified_callback(self.on_modified_mask)
 
     def _find_regions(self, matrix):
-        labels, num_labels = nd.label(matrix)
+        labels, num_labels = nd.label(matrix > 127)
         return labels, num_labels
 
     def _find_regions_actual_mask(self):
@@ -44,6 +45,7 @@ class Window(wx.Dialog):
             s.do_threshold_to_all_slices()
             labels, num_labels = self._find_regions(self.mask.matrix[1:, 1:, 1:])
             counts = count_regions(labels, num_labels)
+            counts[labels == 0] = 0
             self.txt_num_regions.SetValue(str(num_labels))
 
             if self.preview_matrix is None:
@@ -58,7 +60,7 @@ class Window(wx.Dialog):
 
     def _update_preview_matrix(self):
         min_size = self.txt_min_size.GetValue()
-        self.preview_matrix[:] = (self.counts <= min_size) * 255
+        self.preview_matrix[:] = ((self.counts > 0) & (self.counts <= min_size)) * 255
         Publisher.sendMessage("Reload actual slice")
 
     def _init_gui(self):
@@ -140,5 +142,7 @@ class Window(wx.Dialog):
             m[self.preview_matrix > 127] = 1
             self.mask.was_edited = True
             self.preview_matrix[:] = 0
+            self.mask.modified(all_volume=True)
             self.mask.save_history(0, 'VOLUME', self.mask.matrix.copy(), cp_mask)
+            ses.Session().ChangeProject()
             Publisher.sendMessage("Reload actual slice")
