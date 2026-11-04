@@ -95,6 +95,7 @@ class MaskMorphologyGUI(wx.Dialog):
         logger.info(f"Current mask: {current_mask.name}, Index: {current_mask.index}")
 
         # Get mask data
+        self.slice.do_threshold_to_all_slices(current_mask)
         mask_matrix = current_mask.matrix.copy()
         logger.info(f"Mask matrix shape: {mask_matrix.shape}")
         
@@ -102,7 +103,7 @@ class MaskMorphologyGUI(wx.Dialog):
         # Note: We need to process the 3D mask as a binary image
         # The mask has a special structure with indices starting at 1
         # So we need to extract the actual binary data from indices 1:
-        binary_mask = mask_matrix[1:, 1:, 1:] > 0
+        binary_mask = mask_matrix[1:, 1:, 1:] > 127
         logger.info(f"Binary mask shape: {binary_mask.shape}")
         logger.info(f"Binary mask non-zero elements: {np.count_nonzero(binary_mask)}")
         
@@ -179,9 +180,12 @@ class MaskMorphologyGUI(wx.Dialog):
             logger.info(f"New mask shape: {new_mask.shape}")
             
             # Update the mask in the project
-            current_mask.matrix = new_mask
+            self.slice.discard_all_buffers()
+            current_mask.matrix[:] = new_mask
             current_mask.was_edited = True
-            current_mask.modified()
+            current_mask.save_history(0, 'VOLUME', current_mask.matrix, mask_matrix)
+            current_mask.modified(all_volume=True)
+            ses.Session().ChangeProject()
             
             # Update the visualization in the correct order
             Publisher.sendMessage('Reload actual slice')
