@@ -61,7 +61,13 @@ class Window(wx.Dialog):
         Publisher.subscribe(self.on_update_surfaces, "Update surface info in GUI")
         Publisher.subscribe(self.on_update_surfaces, "Remove surfaces")
         Publisher.subscribe(self.on_update_surfaces, "Change surface name")
+
+    def request_actor(self, surface_index):
         Publisher.subscribe(self.SetActor, "Send Actor")
+        try:
+            Publisher.sendMessage("Get Actor", surface_index=surface_index)
+        finally:
+            Publisher.unsubscribe(self.SetActor, "Send Actor")
     
     def SetActor(self, e_field_actor):
         self.current_actor = e_field_actor
@@ -81,7 +87,7 @@ class Window(wx.Dialog):
             return
         last_idx = min(max(last_idx, 0), self.surface_combo.GetCount() - 1)
         self.surface_combo.SetSelection(last_idx)
-        Publisher.sendMessage("Get Actor", surface_index=last_idx)
+        self.request_actor(last_idx)
         
 
     def fill_surfaces_combo(self):
@@ -96,7 +102,7 @@ class Window(wx.Dialog):
 
     def OnSelectSurface(self, _event):
         surface_index = self.surface_combo.GetSelection()
-        Publisher.sendMessage("Get Actor", surface_index=surface_index)
+        self.request_actor(surface_index)
 
 
 

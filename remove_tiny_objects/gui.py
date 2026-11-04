@@ -24,7 +24,7 @@ class Window(wx.Dialog):
     ):
         super().__init__(parent, -1, title=title, style=style)
 
-        self.mask = None
+        self.mask = slc.Slice().current_mask
         self.preview_matrix = None
 
         self._init_gui()
@@ -40,9 +40,8 @@ class Window(wx.Dialog):
 
     def _find_regions_actual_mask(self):
         s = slc.Slice()
-        self.mask = s.current_mask
         if self.mask:
-            s.do_threshold_to_all_slices()
+            s.do_threshold_to_all_slices(self.mask)
             labels, num_labels = self._find_regions(self.mask.matrix[1:, 1:, 1:])
             counts = count_regions(labels, num_labels)
             counts[labels == 0] = 0
